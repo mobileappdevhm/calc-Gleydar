@@ -1,3 +1,4 @@
+import 'package:calculator/calcLogic.dart';
 import 'package:flutter/material.dart';
 
 class CalcHome extends StatelessWidget {
@@ -6,56 +7,82 @@ class CalcHome extends StatelessWidget {
     return new Scaffold(
         appBar: new AppBar(
           title: new Text('Calculator'),
+          backgroundColor: Colors.amber[100],
         ),
-        body: new CalcLayout());
+        body: new CalcLayout(),
+        backgroundColor: Colors.pink[100],);
   }
 }
 
-class ResultString extends StatefulWidget {
+class CalcLayout extends StatefulWidget {
   @override
-  createState() => new ResultState();
-
+  State<StatefulWidget> createState() => new CalcState();
 }
 
-class ResultState extends State<ResultString> {
-  @override
-  Widget build(BuildContext context) {
-    return new Center(child:
-      new Text("I bims", style: new TextStyle(fontSize: 40.0),)
-      , heightFactor: 2.0,);
-  }
+var _text = "0";
 
-}
-
-class CalcLayout extends StatelessWidget {
-
+class CalcState extends State<CalcLayout> {
   @override
   Widget build(BuildContext context) {
     return new Column(children: getColumns());
   }
 
   List<Widget> getColumns() {
+    var labels = [
+      "1", "2", "3", "+",
+      "4", "5", "6", "-",
+      "7", "8", "9", "*",
+      "C", "0", "=", "/",
+      ""];
+
     List<Widget> list = new List<Widget>();
 
-    list.add(new ResultString());
-    for(int i = 0; i < 3; i++) {
-        list.add(
-            new Expanded(
-                child: new Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: new List<Widget>.generate(3, (ind) {
-                      int text = i * 3 + ind + 1;
-          return new Expanded(child:
-            new RaisedButton(
-                onPressed: null,
-                child: new Text('$text')));
-        }))));
+    list.add( new SingleChildScrollView(
+      child: new Center(
+        child: new Text(
+          "$_text",
+          style: new TextStyle(fontSize: 40.0),
+          maxLines: 1,
+        ),
+        heightFactor: 2.0,
+      ),
+      scrollDirection: Axis.horizontal,
+      reverse: true,
+      controller: new ScrollController(),
+    ),
+    );
 
+    void onButton(String label) {
+      setState(() {
+        CalcLogic.doButton(label);
+        _text = CalcLogic.getResult();
+      });
+    }
+
+    for (int i = 0; i < 4; i++) {
+      list.add(
+          new Expanded(
+            child: new Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: new List<Widget>.generate(4, (ind) {
+                var row = labels.sublist(i * 4, i * 4 + 4);
+                var text = row[ind];
+                return new Expanded(
+                    child: new RaisedButton(
+                        onPressed: () {
+                          onButton(text);
+                        },
+                        child: new Text('$text'),
+                        color: ind == 3 ? Colors.blue[200] : Colors.lime[100]
+                    )
+                );
+              }
+                        )
+            )
+          )
+      );
     }
 
     return list;
   }
-
 }
-
-
