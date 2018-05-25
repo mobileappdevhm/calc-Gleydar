@@ -33,7 +33,6 @@ jobs:
           - android-28
           # Sys image for eventual virtual devices
           - sys-img-armeabi-v7a-android-26
-      language: android
       licenses:
         - 'android-sdk-preview-license-.+'
         - 'android-sdk-license-.+'
